@@ -2,11 +2,11 @@ import * as http from 'http';
 // TODO: determine if origin uses HTTPS
 // import * as https from 'https';
 
-import { AllocationsResponse, IRATypeResponse, KeyPair, RiskValueResponse } from './types';
+import { AllocationsResponse, AnswersValues, IRATypeResponse, KeyPair, RiskValueResponse } from './types';
 
 export class BuildUp {
-  private readonly API_ORIGIN: string = 'localhost';
-  private readonly API_PORT: number = 6100;
+  private readonly API_ORIGIN: string = '140.82.22.55';
+  private readonly API_PORT: number = 80;
 
   private readonly KEY: string;
   private readonly SECRET: string;
@@ -18,7 +18,7 @@ export class BuildUp {
 
   /**
    *
-   * @param riskValue
+   * @param riskValue {number}
    */
   public getAllocations(riskValue: number): Promise<AllocationsResponse> {
     if (!riskValue) {
@@ -53,11 +53,11 @@ export class BuildUp {
 
   /**
    *
-   * @param IRAType
+   * @param IRAType {string}
    */
   public getIRATypes(IRAType: string): Promise<IRATypeResponse> {
     return new Promise((resolve, reject) => {
-      const reqData = JSON.stringify({ IRAType: IRAType });
+      const reqData = JSON.stringify({ IRAType });
       const options = {
         headers: {
           'Content-Length': reqData.length,
@@ -77,24 +77,11 @@ export class BuildUp {
 
   /**
    *
-   * @param riskGrowth
-   * @param riskLevel
-   * @param riskLosses
-   * @param riskVolatility
+   * @param answers {AnswersValues}
    */
-  public async getRiskValues(
-    riskGrowth: number,
-    riskLevel: number,
-    riskLosses: number,
-    riskVolatility: number,
-  ): Promise<RiskValueResponse> {
+  public async getRiskValue(answers: AnswersValues): Promise<RiskValueResponse> {
     return new Promise((resolve, reject) => {
-      const reqData = JSON.stringify({
-        riskGrowth,
-        riskLevel,
-        riskLosses,
-        riskVolatility,
-      });
+      const reqData = JSON.stringify(answers);
       const options = {
         headers: {
           'Content-Length': reqData.length,

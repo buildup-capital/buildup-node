@@ -14,6 +14,13 @@ export interface AllocationsResponse {
   status: number;
 }
 
+export interface AnswersValues {
+  riskGrowth: number;
+  riskLevel: number;
+  riskLosses: number;
+  riskVolatility: number;
+}
+
 export interface IRATypeObject {
   IRAType: string;
   maxContribution: string | number;
