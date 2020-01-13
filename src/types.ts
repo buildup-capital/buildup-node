@@ -15,10 +15,10 @@ export interface AllocationsResponse {
 }
 
 export interface AnswersValues {
-  riskGrowth: number;
-  riskLevel: number;
-  riskLosses: number;
-  riskVolatility: number;
+  riskGrowth?: number;
+  riskLevel?: number;
+  riskLosses?: number;
+  riskVolatility?: number;
 }
 
 export interface IRATypeObject {
@@ -41,7 +41,9 @@ export interface KeyPair {
 }
 
 export interface RiskValueObject {
-  riskValue: string;
+  invalid?: string[];
+  missing?: string[];
+  riskValue?: string;
 }
 
 export interface RiskValueResponse {

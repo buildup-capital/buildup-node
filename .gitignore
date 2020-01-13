@@ -1,6 +1,7 @@
 node_modules/
 .idea/
-
-test.js
 .DS_Store
 build/
+
+keys.ts
+zxc.js
