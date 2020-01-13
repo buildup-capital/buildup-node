@@ -66,7 +66,7 @@ Method returns an object:
     SPAB: 10,
     VEA: 30,
     VOO: 30,
-    VTWO: 30,
+    VTWO: 30
 }
 ```
 
@@ -94,11 +94,11 @@ This method provides Risk Value based on the Risk Question answers.
 
 ```javascript
 const answers = {
-      riskGrowth: 5,
-      riskLevel: 2,
-      riskLosses: 4,
-      riskVolatility: 2,
-    };
+  riskGrowth: 5,
+  riskLevel: 2,
+  riskLosses: 4,
+  riskVolatility: 2,
+};
 
 const riskValue = await BuildUpClient.getRiskValue(answers);
 ```
@@ -106,6 +106,6 @@ const riskValue = await BuildUpClient.getRiskValue(answers);
 Method returns an object:
 ```
 {
-    riskValue: 3.25,
+    riskValue: 3.25
 }
 ```

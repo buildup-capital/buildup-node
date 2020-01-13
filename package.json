@@ -5,6 +5,9 @@
   "homepage": "https://github.com/buildup-capital/buildup-node",
   "types": "build/index.d.ts",
   "main": "build/index.js",
+  "files": [
+    "build/**/*"
+  ],
   "license": "ISC",
   "scripts": {
     "build": "tsc",
