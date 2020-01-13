@@ -1,9 +1,8 @@
 {
   "name": "buildup-node",
-  "version": "0.0.1",
-  "author": "",
-  "description": "BuildUp Node",
-  "homepage": "https://github.com/peterdee/buildup-node",
+  "version": "1.0.0",
+  "description": "BuildUp module",
+  "homepage": "https://github.com/buildup-capital/buildup-node",
   "types": "build/index.d.ts",
   "main": "build/index.js",
   "license": "ISC",
@@ -19,14 +18,17 @@
     "version": "npm run format && git add -A src"
   },
   "engines": {
-    "node": "13.5.0",
+    "node": "13.6.0",
     "npm": "6.13.4"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/peterdee/buildup-node"
+    "url": "git+https://github.com/buildup-capital/buildup-node"
   },
-  "keywords": [],
+  "keywords": [
+    "BuildUp",
+    "Node"
+  ],
   "devDependencies": {
     "@types/jest": "^24.0.25",
     "@types/node": "^13.1.4",

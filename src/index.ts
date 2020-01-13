@@ -2,7 +2,13 @@ import * as http from 'http';
 // TODO: determine if origin uses HTTPS
 // import * as https from 'https';
 
-import { AllocationsResponse, AnswersValues, IRATypeResponse, KeyPair, RiskValueResponse } from './types';
+import {
+  AllocationsResponse,
+  AnswersValues,
+  IRATypeResponse,
+  KeyPair,
+  RiskValueResponse,
+} from './types';
 
 export class BuildUp {
   private readonly API_ORIGIN: string = '140.82.22.55';
@@ -17,8 +23,9 @@ export class BuildUp {
   }
 
   /**
-   *
+   * Get allocations based on the Risk Value
    * @param riskValue {number}
+   * @returns {Promise<AllocationsResponse>}
    */
   public getAllocations(riskValue: number): Promise<AllocationsResponse> {
     if (!riskValue) {
@@ -52,10 +59,11 @@ export class BuildUp {
   }
 
   /**
-   *
+   * Get IRA data from the provided IRA type
    * @param IRAType {string}
+   * @returns {Promise<IRATypeResponse>}
    */
-  public getIRATypes(IRAType: string): Promise<IRATypeResponse> {
+  public getIRAType(IRAType: string): Promise<IRATypeResponse> {
     return new Promise((resolve, reject) => {
       const reqData = JSON.stringify({ IRAType });
       const options = {

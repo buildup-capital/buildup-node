@@ -2,8 +2,6 @@
 
 This module provides an access to the BuildUp APIs.
 
-*Additional information regarding BuildUp*
-
 ### Installation
 
 ```bash
@@ -13,8 +11,6 @@ npm install buildup-node
 ### BuildUp API keys
 
 API keys are required for the module to work.
-
-*API keys information*
 
 ### Usage
 
@@ -74,14 +70,14 @@ Method returns an object:
 }
 ```
 
-**getIRATypes(IRAType: string)**
+**getIRAType(IRAType: string)**
 
 This method provides maximum contribution amount based on the selected IRA type.
 
 ```javascript
 const IRAType = 'SEP IRA';
 
-const IRAData = await BuildUpClient.getIRATypes(IRAType);
+const IRAData = await BuildUpClient.getIRAType(IRAType);
 ```
 
 Method returns an object:

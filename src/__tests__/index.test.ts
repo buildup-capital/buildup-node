@@ -1,11 +1,10 @@
+import { keys } from '../../keys';
 import { BuildUp } from '../index';
 import {
     AllocationsResponse,
     IRATypeResponse,
     RiskValueResponse,
 } from '../types';
-import { keys } from '../../keys'
-
 
 const Client = new BuildUp(keys);
 
@@ -76,24 +75,24 @@ test('Load riskValue missing error', async () => {
 });
 
 test('Load maximum contribution for SEP IRA Type', async () => {
-    const IRAType: IRATypeResponse = await Client.getIRATypes('SEP IRA');
+    const IRAType: IRATypeResponse = await Client.getIRAType('SEP IRA');
     expect (IRAType.data.IRAType).toBe('SEP IRA');
     expect (IRAType.data.maxContribution).toBe('15%');
 });
 
 test('Load maximum contribution for Traditional IRA Type', async () => {
-    const IRAType: IRATypeResponse = await Client.getIRATypes('Traditional IRA');
+    const IRAType: IRATypeResponse = await Client.getIRAType('Traditional IRA');
     expect (IRAType.data.IRAType).toBe('Traditional IRA');
     expect (IRAType.data.maxContribution).toBe(6000);
 });
 
 test('Load maximum contribution for Roth IRA Type', async () => {
-    const IRAType: IRATypeResponse = await Client.getIRATypes('Roth IRA');
+    const IRAType: IRATypeResponse = await Client.getIRAType('Roth IRA');
     expect (IRAType.data.IRAType).toBe('Roth IRA');
     expect (IRAType.data.maxContribution).toBe(6000);
 });
 
 test('Load maximum contribution invalid error', async () => {
-    const IRAType: IRATypeResponse = await Client.getIRATypes('Invalid string');
+    const IRAType: IRATypeResponse = await Client.getIRAType('Invalid string');
     expect (IRAType.info).toBe('INVALID_IRA_TYPE');
 });
