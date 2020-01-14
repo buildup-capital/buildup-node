@@ -1,3 +1,42 @@
+export interface AccountOverviewAmountSavedObject {
+  amountSaved: number;
+  contributionPercentage: number;
+  income: number;
+}
+
+export interface AccountOverviewInvestmentEarningsObject {
+  amountSaved: number;
+  annualReturnPercentage: number;
+  investmentEarnings: number;
+  returnPercentageGraph: ReturnPercentageGraphObject[];
+}
+
+export interface AccountOverviewObject {
+  amountSaved?: AccountOverviewAmountSavedObject;
+  investmentEarnings?: AccountOverviewInvestmentEarningsObject;
+  taxesReduction?: AccountOverviewTaxesReductionObject;
+  retirementSavings?: AccountOverviewRetirementSavingsObject;
+  invalid?: string[];
+  missing?: string[];
+}
+
+export interface AccountOverviewRetirementSavingsObject {
+  amountSaved: number;
+}
+
+export interface AccountOverviewTaxesReductionObject {
+  amountInvested: number;
+}
+
+export interface AccountOverviewResponse {
+  data?: AccountOverviewObject;
+  datetime: number;
+  info: string;
+  misc: string;
+  request: string;
+  status: number;
+}
+
 export interface AllocationsObject {
   SPAB: number;
   VEA: number;
@@ -38,6 +77,11 @@ export interface IRATypeResponse {
 export interface KeyPair {
   key: string;
   secret: string;
+}
+
+export interface ReturnPercentageGraphObject {
+  date: string;
+  returnPercentage: number;
 }
 
 export interface RiskValueObject {

@@ -1,12 +1,13 @@
-import { keys } from '../../keys';
+import { keys, localKeys } from '../../keys';
 import { BuildUp } from '../index';
 import {
+    AccountOverviewResponse,
     AllocationsResponse,
     IRATypeResponse,
     RiskValueResponse,
 } from '../types';
 
-const Client = new BuildUp(keys);
+const Client = new BuildUp(localKeys);
 
 test('Check class instance', () => expect(Client instanceof BuildUp).toBe(true));
 
@@ -95,4 +96,40 @@ test('Load maximum contribution for Roth IRA Type', async () => {
 test('Load maximum contribution invalid error', async () => {
     const IRAType: IRATypeResponse = await Client.getIRAType('Invalid string');
     expect (IRAType.info).toBe('INVALID_IRA_TYPE');
+});
+
+test('Load account overview', async () => {
+    const accountOverview: AccountOverviewResponse = await Client.getAccountOverview(5, 'SEP IRA', 4, 15000, 1578988351);
+    expect (accountOverview.data.amountSaved.amountSaved).toBe(750);
+    expect (accountOverview.data.amountSaved.contributionPercentage).toBe(5);
+    expect (accountOverview.data.amountSaved.income).toBe(15000);
+    expect (accountOverview.data.investmentEarnings.amountSaved).toBe(750);
+    expect (!!accountOverview.data.investmentEarnings.annualReturnPercentage).toBe(true);
+    expect (!!accountOverview.data.investmentEarnings.investmentEarnings).toBe(true);
+    expect (!!accountOverview.data.investmentEarnings.returnPercentageGraph.length).toBe(true);
+    expect (accountOverview.data.taxesReduction.amountInvested).toBe(750);
+    expect (accountOverview.data.retirementSavings.amountSaved).toBe(2250);
+});
+
+test('Load account overview', async () => {
+    const accountOverview: AccountOverviewResponse = await Client.getAccountOverview(10, 'Traditional IRA', 5, 20000, 1578988351);
+    expect (accountOverview.data.amountSaved.amountSaved).toBe(2000);
+    expect (accountOverview.data.amountSaved.contributionPercentage).toBe(10);
+    expect (accountOverview.data.amountSaved.income).toBe(20000);
+    expect (accountOverview.data.investmentEarnings.amountSaved).toBe(2000);
+    expect (!!accountOverview.data.investmentEarnings.annualReturnPercentage).toBe(true);
+    expect (!!accountOverview.data.investmentEarnings.investmentEarnings).toBe(true);
+    expect (!!accountOverview.data.investmentEarnings.returnPercentageGraph.length).toBe(true);
+    expect (accountOverview.data.taxesReduction.amountInvested).toBe(2000);
+    expect (accountOverview.data.retirementSavings.amountSaved).toBe(6000);
+});
+
+test('Load account overview invalid IRA Type error', async () => {
+    const accountOverview: AccountOverviewResponse = await Client.getAccountOverview(10, 'Invalid string', 5, 20000, 1578988351);
+    expect (accountOverview.info).toBe('INVALID_IRA_TYPE');
+});
+
+test('Load account overview invalid Risk Value error', async () => {
+    const accountOverview: AccountOverviewResponse = await Client.getAccountOverview(10, 'SEP IRA', 8, 20000, 1578988351);
+    expect (accountOverview.info).toBe('INVALID_RISK_VALUE');
 });
