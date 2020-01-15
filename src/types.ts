@@ -4,6 +4,14 @@ export interface AccountOverviewAmountSavedObject {
   income: number;
 }
 
+export interface AccountOverviewData {
+  IRAType: string;
+  contributionPercentage: number;
+  riskValue: number;
+  startDate: number;
+  totalIncome: number;
+}
+
 export interface AccountOverviewInvestmentEarningsObject {
   amountSaved: number;
   annualReturnPercentage: number;

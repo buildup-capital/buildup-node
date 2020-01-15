@@ -3,6 +3,7 @@ import * as http from 'http';
 // import * as https from 'https';
 
 import {
+  AccountOverviewData,
   AccountOverviewResponse,
   AllocationsResponse,
   AnswersValues,
@@ -14,8 +15,6 @@ import {
 export class BuildUp {
   private readonly API_ORIGIN: string = '140.82.22.55';
   private readonly API_PORT: number = 80;
-  private readonly LOCAL_API_ORIGIN: string = 'localhost';
-  private readonly LOCAL_API_PORT: number = 6100;
 
   private readonly KEY: string;
   private readonly SECRET: string;
@@ -26,47 +25,38 @@ export class BuildUp {
   }
 
   /**
-   * Get account overview based on Contribution Percentage, IRA Type, Risk Value, Total Income and Start Date
-   * @param contributionPercentage {number}
-   * @param IRAType {string}
-   * @param riskValue {number}
-   * @param totalIncome {number}
-   * @param startDate {number}
+   * Get account overview based on Contribution Percentage, IRA Type, Risk Value, Start Date and Total Income
+   * @param accountData {AccountOverviewData} - account overview data
    * @returns {Promise<AccountOverviewResponse>}
    */
-  public getAccountOverview(
-      contributionPercentage: number,
-      IRAType: string,
-      riskValue: number,
-      totalIncome: number,
-      startDate: number,
-      ): Promise<AccountOverviewResponse> {
-    if (!(contributionPercentage && IRAType && riskValue && totalIncome && startDate)) {
-      throw new Error(
-          `BuildUp: 
-          ${!contributionPercentage ? 'Contribution Percentage, ' : ''}
-          ${!IRAType ? 'IRA Type, ': ''}
-          ${!riskValue ? 'Risk Value, ': ''}
-          ${!totalIncome ? 'Total Income, ': ''}
-          ${!startDate ? 'Start Date ': ''}is required!`);
+  public getAccountOverview(accountData: AccountOverviewData): Promise<AccountOverviewResponse> {
+    const {
+      IRAType,
+      contributionPercentage,
+      riskValue,
+      startDate,
+      totalIncome,
+    }: AccountOverviewData = accountData;
+    if (!(IRAType && contributionPercentage && riskValue && startDate && totalIncome)) {
+      throw new Error(`BuildUp: invalid account data provided! Account data object should contain:\n
+        IRA Type\n
+        Contribution Percentage\n
+        Risk Value\n
+        Start Date\n
+        Total Income
+      `);
     }
     return new Promise((resolve, reject) => {
-      const data = JSON.stringify({
-        contributionPercentage,
-        IRAType,
-        riskValue,
-        totalIncome,
-        startDate,
-      });
+      const data = JSON.stringify(accountData);
       const options = {
         headers: {
           'Content-Length': data.length,
           'Content-Type': 'application/json',
         },
-        hostname: this.LOCAL_API_ORIGIN,
+        hostname: this.API_ORIGIN,
         method: 'POST',
         path: `/api/v1/account-overview?${this.getKeyAndSecret()}`,
-        port: this.LOCAL_API_PORT,
+        port: this.API_PORT,
       };
       const request = this.createHttpRequest(options, resolve);
       request.on('error', (error: Error): void => reject(error));
@@ -84,31 +74,17 @@ export class BuildUp {
     if (!riskValue) {
       throw new Error('BuildUp: Risk Value is required!');
     }
-    return new Promise((resolve, reject) =>
-      http
-        .get(
-          {
-            hostname: this.LOCAL_API_ORIGIN,
-            method: 'GET',
-            path: `/api/v1/allocations?riskValue=${riskValue}&${this.getKeyAndSecret()}`,
-            port: this.LOCAL_API_PORT,
-          },
-          (response: http.IncomingMessage): void => {
-            let data: string = '';
-            response.setEncoding('utf8');
-            response.on('readable', (): void => {
-              const chunk: string = response.read();
-              if (chunk !== null) {
-                data += chunk;
-              }
-            });
-            response.on('end', () => {
-              return resolve(JSON.parse(data));
-            });
-          },
-        )
-        .on('error', (error: Error): void => reject(error)),
-    );
+    return new Promise((resolve, reject) => {
+      const options = {
+        hostname: this.API_ORIGIN,
+        method: 'GET',
+        path: `/api/v1/allocations?riskValue=${riskValue}&${this.getKeyAndSecret()}`,
+        port: this.API_PORT,
+      };
+      const request = this.createHttpRequest(options, resolve);
+      request.on('error', (error: Error): void => reject(error));
+      request.end();
+    });
   }
 
   /**
@@ -121,47 +97,48 @@ export class BuildUp {
       throw new Error('BuildUp: IRA Type is required!');
     }
     return new Promise((resolve, reject) => {
-      const reqData = JSON.stringify({ IRAType });
+      const data = JSON.stringify({ IRAType });
       const options = {
         headers: {
-          'Content-Length': reqData.length,
+          'Content-Length': data.length,
           'Content-Type': 'application/json',
         },
-        hostname: this.LOCAL_API_ORIGIN,
+        hostname: this.API_ORIGIN,
         method: 'POST',
         path: `/api/v1/ira-type?${this.getKeyAndSecret()}`,
-        port: this.LOCAL_API_PORT,
+        port: this.API_PORT,
       };
       const request = this.createHttpRequest(options, resolve);
       request.on('error', (error: Error): void => reject(error));
-      request.write(reqData);
+      request.write(data);
       request.end();
     });
   }
 
   /**
-   *
+   * Get Risk Value based on the Risk Answers
    * @param answers {AnswersValues}
+   * @returns {Promise<RiskValueResponse>}
    */
-  public async getRiskValue(answers: AnswersValues): Promise<RiskValueResponse> {
+  public getRiskValue(answers: AnswersValues): Promise<RiskValueResponse> {
     if (!answers) {
-      throw new Error('BuildUp: Answers is required!');
+      throw new Error('BuildUp: Risk Answers object is required!');
     }
     return new Promise((resolve, reject) => {
-      const reqData = JSON.stringify(answers);
+      const data = JSON.stringify(answers);
       const options = {
         headers: {
-          'Content-Length': reqData.length,
+          'Content-Length': data.length,
           'Content-Type': 'application/json',
         },
-        hostname: this.LOCAL_API_ORIGIN,
+        hostname: this.API_ORIGIN,
         method: 'POST',
         path: `/api/v1/risk-value?${this.getKeyAndSecret()}`,
-        port: this.LOCAL_API_PORT,
+        port: this.API_PORT,
       };
       const request = this.createHttpRequest(options, resolve);
       request.on('error', (error: Error): void => reject(error));
-      request.write(reqData);
+      request.write(data);
       request.end();
     });
   }
@@ -170,7 +147,7 @@ export class BuildUp {
    * Get key and secret path string
    * @returns {string}
    */
-  private getKeyAndSecret() {
+  private getKeyAndSecret(): string {
     return `key=${this.KEY}&secret=${this.SECRET}`;
   }
 
@@ -190,9 +167,7 @@ export class BuildUp {
           data += chunk;
         }
       });
-      response.on('end', () => {
-        return resolve(JSON.parse(data));
-      });
+      response.on('end', () => resolve(JSON.parse(data)));
     });
   }
 }
