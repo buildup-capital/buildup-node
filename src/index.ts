@@ -30,13 +30,7 @@ export class BuildUp {
    * @returns {Promise<AccountOverviewResponse>}
    */
   public getAccountOverview(accountData: AccountOverviewData): Promise<AccountOverviewResponse> {
-    const {
-      IRAType,
-      contributionPercentage,
-      riskValue,
-      startDate,
-      totalIncome,
-    }: AccountOverviewData = accountData;
+    const { IRAType, contributionPercentage, riskValue, startDate, totalIncome }: AccountOverviewData = accountData;
     if (!(IRAType && contributionPercentage && riskValue && startDate && totalIncome)) {
       throw new Error(`BuildUp: invalid account data provided! Account data object should contain:\n
         IRA Type\n
