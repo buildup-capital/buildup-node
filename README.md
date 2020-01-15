@@ -55,7 +55,7 @@ async function getRiskValue() {
 
 **getAccountOverview(accountData: AccountOverviewData)**
 
-This method provides account overview data based on the provided account data.
+This method provides Account Overview data based on the provided account data.
 
 ```javascript
 const accountData = { 
