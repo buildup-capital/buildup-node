@@ -10,6 +10,7 @@ export interface AccountOverviewData {
   riskValue: number;
   startDate: number;
   totalIncome: number;
+  uid: string;
 }
 
 export interface AccountOverviewInvestmentEarningsObject {
@@ -45,6 +46,16 @@ export interface AccountOverviewResponse {
   status: number;
 }
 
+export interface AllocationsData {
+  riskValue: number;
+  uid: string;
+}
+
+export interface IRADataType {
+  IRAType: string;
+  uid: string;
+}
+
 export interface AllocationsObject {
   SPAB: number;
   VEA: number;
@@ -63,9 +74,10 @@ export interface AllocationsResponse {
 
 export interface AnswersValues {
   riskGrowth?: number;
-  riskLevel?: number;
-  riskLosses?: number;
-  riskVolatility?: number;
+  riskLevel: number;
+  riskLosses: number;
+  riskVolatility: number;
+  uid: string;
 }
 
 export interface IRATypeObject {
@@ -95,7 +107,7 @@ export interface ReturnPercentageGraphObject {
 export interface RiskValueObject {
   invalid?: string[];
   missing?: string[];
-  riskValue?: string;
+  riskValue?: number|string;
 }
 
 export interface RiskValueResponse {

@@ -5,16 +5,18 @@ import * as http from 'http';
 import {
   AccountOverviewData,
   AccountOverviewResponse,
+  AllocationsData,
   AllocationsResponse,
   AnswersValues,
+  IRADataType,
   IRATypeResponse,
   KeyPair,
   RiskValueResponse,
 } from './types';
 
 export class BuildUp {
-  private readonly API_ORIGIN: string = '140.82.22.55';
-  private readonly API_PORT: number = 80;
+  private readonly API_ORIGIN: string = 'localhost'; // '140.82.22.55';
+  private readonly API_PORT: number = 6100; // 80;
 
   private readonly KEY: string;
   private readonly SECRET: string;
@@ -30,14 +32,22 @@ export class BuildUp {
    * @returns {Promise<AccountOverviewResponse>}
    */
   public getAccountOverview(accountData: AccountOverviewData): Promise<AccountOverviewResponse> {
-    const { IRAType, contributionPercentage, riskValue, startDate, totalIncome }: AccountOverviewData = accountData;
-    if (!(IRAType && contributionPercentage && riskValue && startDate && totalIncome)) {
-      throw new Error(`BuildUp: invalid account data provided! Account data object should contain:\n
+    const {
+      IRAType,
+      contributionPercentage,
+      riskValue,
+      startDate,
+      totalIncome,
+      uid,
+    }: AccountOverviewData = accountData;
+    if (!(IRAType && contributionPercentage && riskValue && startDate && totalIncome && uid)) {
+      throw new Error(`BuildUp: invalid account overview data provided! Account overview data object should contain:\n
         IRA Type\n
         Contribution Percentage\n
         Risk Value\n
         Start Date\n
-        Total Income
+        Total Income\n
+        UID
       `);
     }
     return new Promise((resolve, reject) => {
@@ -61,37 +71,50 @@ export class BuildUp {
 
   /**
    * Get allocations based on the Risk Value
-   * @param riskValue {number}
+   * @param allocationsData {AllocationsData} - Allocations data, should contain Risk Value and UID
    * @returns {Promise<AllocationsResponse>}
    */
-  public getAllocations(riskValue: number): Promise<AllocationsResponse> {
-    if (!riskValue) {
-      throw new Error('BuildUp: Risk Value is required!');
+  public getAllocations(allocationsData: AllocationsData): Promise<AllocationsResponse> {
+    const { riskValue, uid }: AllocationsData = allocationsData;
+    if (!(riskValue && uid)) {
+      throw new Error(`BuildUp: invalid Allocations Data provided! Allocations Data object should contain:\n
+        Risk Value\n
+        UID
+      `);
     }
     return new Promise((resolve, reject) => {
+      const data = JSON.stringify(allocationsData);
       const options = {
+        headers: {
+          'Content-Length': data.length,
+          'Content-Type': 'application/json',
+        },
         hostname: this.API_ORIGIN,
-        method: 'GET',
-        path: `/api/v1/allocations?riskValue=${riskValue}&${this.getKeyAndSecret()}`,
+        method: 'POST',
+        path: `/api/v1/allocations?${this.getKeyAndSecret()}`,
         port: this.API_PORT,
       };
       const request = this.createHttpRequest(options, resolve);
       request.on('error', (error: Error): void => reject(error));
+      request.write(data);
       request.end();
     });
   }
 
   /**
    * Get IRA data from the provided IRA type
-   * @param IRAType {string}
+   * @param IRAData {IRADataType} - IRA data, should contain IRA Type and UID
    * @returns {Promise<IRATypeResponse>}
    */
-  public getIRAType(IRAType: string): Promise<IRATypeResponse> {
-    if (!IRAType) {
-      throw new Error('BuildUp: IRA Type is required!');
+  public getIRAType(IRAData: IRADataType): Promise<IRATypeResponse> {
+    if (!(IRAData && IRAData.IRAType && IRAData.uid)) {
+      throw new Error(`BuildUp: invalid IRA data provided! IRA data object should contain:\n
+        IRA Type\n
+        UID
+      `);
     }
     return new Promise((resolve, reject) => {
-      const data = JSON.stringify({ IRAType });
+      const data = JSON.stringify(IRAData);
       const options = {
         headers: {
           'Content-Length': data.length,
@@ -115,8 +138,21 @@ export class BuildUp {
    * @returns {Promise<RiskValueResponse>}
    */
   public getRiskValue(answers: AnswersValues): Promise<RiskValueResponse> {
-    if (!answers) {
-      throw new Error('BuildUp: Risk Answers object is required!');
+    const isAnswersValues = answers
+      && answers.riskGrowth
+      && answers.riskLevel
+      && answers.riskLosses
+      && answers.riskVolatility
+      && answers.uid;
+
+    if (!isAnswersValues) {
+      throw new Error(`BuildUp: invalid Answers values data provided! Answers values data object should contain:\n
+        riskGrowth\n
+        riskLevel\n
+        riskLosses\n
+        riskVolatility\n
+        UID
+      `);
     }
     return new Promise((resolve, reject) => {
       const data = JSON.stringify(answers);
