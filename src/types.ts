@@ -4,15 +4,6 @@ export interface AccountOverviewAmountSavedObject {
   income: number;
 }
 
-export interface AccountOverviewData {
-  IRAType: string;
-  contributionPercentage: number;
-  riskValue: number;
-  startDate: number;
-  totalIncome: number;
-  uid: string;
-}
-
 export interface AccountOverviewInvestmentEarningsObject {
   amountSaved: number;
   annualReturnPercentage: number;
@@ -27,6 +18,15 @@ export interface AccountOverviewObject {
   retirementSavings?: AccountOverviewRetirementSavingsObject;
   invalid?: string[];
   missing?: string[];
+}
+
+export interface AccountOverviewOptions {
+  IRAType: string;
+  contributionPercentage: number;
+  riskValue: number;
+  startDate: number;
+  totalIncome: number;
+  uid: string;
 }
 
 export interface AccountOverviewRetirementSavingsObject {
@@ -46,14 +46,8 @@ export interface AccountOverviewResponse {
   status: number;
 }
 
-export interface AllocationsData {
-  riskValue: number;
-  uid: string;
-}
-
-export interface IRADataType {
-  IRAType: string;
-  uid: string;
+export interface AllocationsDataObject {
+  allocations: AllocationsObject,
 }
 
 export interface AllocationsObject {
@@ -63,8 +57,13 @@ export interface AllocationsObject {
   VTWO: number;
 }
 
+export interface AllocationsOptions {
+  riskValue: number;
+  uid: string;
+}
+
 export interface AllocationsResponse {
-  data: AllocationsObject;
+  data: AllocationsDataObject;
   datetime: number;
   info: string;
   misc: string;
@@ -83,6 +82,11 @@ export interface AnswersValues {
 export interface IRATypeObject {
   IRAType: string;
   maxContribution: string | number;
+}
+
+export interface IRATypeOptions {
+  IRAType: string;
+  uid: string;
 }
 
 export interface IRATypeResponse {
@@ -108,6 +112,14 @@ export interface RiskValueObject {
   invalid?: string[];
   missing?: string[];
   riskValue?: number|string;
+}
+
+export interface RiskValueOptions {
+  riskGrowth?: number;
+  riskLevel: number;
+  riskLosses: number;
+  riskVolatility: number;
+  uid: string;
 }
 
 export interface RiskValueResponse {

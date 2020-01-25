@@ -12,6 +12,8 @@ npm install buildup-node
 
 API keys are required for the module to work.
 
+Please [contact the developer](https://github.com/peterdee) to get more infomation regarding the API keys.
+
 ### Usage
 
 Import the module:
@@ -29,21 +31,26 @@ const BuildUpClient = new BuildUp({
 });
 ```
 
-You can now access the provided APIs in your async functions:
+You can now access the provided APIs in your async functions.
+
+Please notice: all of the requests should contain `uid` - a unique user identifier (`string`).
 
 ```javascript
 async function getRiskValue() {
   try {
     /* ... */
 
-    const answers = {
+    const options = {
       riskGrowth: 5,
       riskLevel: 2,
       riskLosses: 4,
       riskVolatility: 2,
     };
 
-    const riskValue = await BuildUpClient.getRiskValue(answers);
+    // add a user identifier to the options
+    options.uid = User.identifier; // 'someUniqueIdentifierString'
+
+    const riskValue = await BuildUpClient.getRiskValue(options);
     console.log(riskValue); // 3.25
   } catch (error) {
     /* ... */
@@ -53,12 +60,12 @@ async function getRiskValue() {
 
 ### Available methods
 
-**getAccountOverview(accountData: AccountOverviewData)**
+**getAccountOverview(options: AccountOverviewOptions)**
 
 This method provides Account Overview data based on the provided account data.
 
 ```javascript
-const accountData = { 
+const options = { 
   IRAType: 'SEP IRA',
   contributionPercentage: 5,
   riskValue: 4,
@@ -66,7 +73,10 @@ const accountData = {
   totalIncome: 15000,
 };
 
-const accountOverview = await BuildUpClient.getAccountOverview(accountData);
+// add a user identifier to the options
+options.uid = User.identifier;
+
+const accountOverview = await BuildUpClient.getAccountOverview(options);
 ```
 
 Options:
@@ -110,14 +120,19 @@ Method returns an object:
 }
 ```
 
-**getAllocations(riskValue: number)**
+**getAllocations(options: AllocationsOptions)**
 
 This method provides stock allocations based on the Risk Value.
 
 ```javascript
-const riskValue = 5;
+const options = {
+  riskValue: 5,
+};
 
-const allocations = await BuildUpClient.getAllocations(riskValue);
+// add a user identifier to the options
+options.uid = User.identifier;
+
+const allocations = await BuildUpClient.getAllocations(options);
 ```
 
 Options:
@@ -127,14 +142,16 @@ Options:
 Method returns an object:
 ```
 {
-  SPAB: 10,
-  VEA: 30,
-  VOO: 30,
-  VTWO: 30
+  allocations: {
+    SPAB: 10,
+    VEA: 30,
+    VOO: 30,
+    VTWO: 30
+  }
 }
 ```
 
-**getIRAType(IRAType: string)**
+**getIRAType(options: IRATypeOptions)**
 
 This method provides maximum contribution amount based on the selected IRA type.
 

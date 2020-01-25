@@ -3,20 +3,24 @@ import * as http from 'http';
 // import * as https from 'https';
 
 import {
-  AccountOverviewData,
+  AccountOverviewOptions,
   AccountOverviewResponse,
-  AllocationsData,
+  AllocationsOptions,
   AllocationsResponse,
-  AnswersValues,
-  IRADataType,
+  IRATypeOptions,
   IRATypeResponse,
   KeyPair,
+  RiskValueOptions,
   RiskValueResponse,
 } from './types';
 
+const cr = 'BuildUp: invalid options provided! Options object should contain the following properties:\n';
+
 export class BuildUp {
-  private readonly API_ORIGIN: string = 'localhost'; // '140.82.22.55';
-  private readonly API_PORT: number = 6100; // 80;
+  private readonly API_ORIGIN: string = '140.82.22.55';
+  private readonly API_PORT: number = 80;
+
+  private readonly FAILED_CHECK_ERROR = cr;
 
   private readonly KEY: string;
   private readonly SECRET: string;
@@ -27,11 +31,11 @@ export class BuildUp {
   }
 
   /**
-   * Get account overview based on Contribution Percentage, IRA Type, Risk Value, Start Date and Total Income
-   * @param accountData {AccountOverviewData} - account overview data
+   * Get Account Overview based on Contribution Percentage, IRA Type, Risk Value, Start Date and Total Income
+   * @param options {AccountOverviewOptions} - options object, should contain the necessary data and UID
    * @returns {Promise<AccountOverviewResponse>}
    */
-  public getAccountOverview(accountData: AccountOverviewData): Promise<AccountOverviewResponse> {
+  public getAccountOverview(options: AccountOverviewOptions): Promise<AccountOverviewResponse> {
     const {
       IRAType,
       contributionPercentage,
@@ -39,20 +43,20 @@ export class BuildUp {
       startDate,
       totalIncome,
       uid,
-    }: AccountOverviewData = accountData;
+    }: AccountOverviewOptions = options;
     if (!(IRAType && contributionPercentage && riskValue && startDate && totalIncome && uid)) {
-      throw new Error(`BuildUp: invalid account overview data provided! Account overview data object should contain:\n
-        IRA Type\n
-        Contribution Percentage\n
-        Risk Value\n
-        Start Date\n
-        Total Income\n
-        UID
+      throw new Error(`${this.FAILED_CHECK_ERROR}
+        IRAType\n
+        contributionPercentage\n
+        riskValue\n
+        startDate\n
+        totalIncome\n
+        uid
       `);
     }
     return new Promise((resolve, reject) => {
-      const data = JSON.stringify(accountData);
-      const options = {
+      const data = JSON.stringify(options);
+      const requestOptions = {
         headers: {
           'Content-Length': data.length,
           'Content-Type': 'application/json',
@@ -62,7 +66,7 @@ export class BuildUp {
         path: `/api/v1/account-overview?${this.getKeyAndSecret()}`,
         port: this.API_PORT,
       };
-      const request = this.createHttpRequest(options, resolve);
+      const request = this.createHttpRequest(requestOptions, resolve);
       request.on('error', (error: Error): void => reject(error));
       request.write(data);
       request.end();
@@ -70,21 +74,20 @@ export class BuildUp {
   }
 
   /**
-   * Get allocations based on the Risk Value
-   * @param allocationsData {AllocationsData} - Allocations data, should contain Risk Value and UID
+   * Get Allocations based on the Risk Value
+   * @param options {AllocationsOptions} - options object, should contain Risk Value and UID
    * @returns {Promise<AllocationsResponse>}
    */
-  public getAllocations(allocationsData: AllocationsData): Promise<AllocationsResponse> {
-    const { riskValue, uid }: AllocationsData = allocationsData;
-    if (!(riskValue && uid)) {
-      throw new Error(`BuildUp: invalid Allocations Data provided! Allocations Data object should contain:\n
-        Risk Value\n
-        UID
+  public getAllocations(options: AllocationsOptions): Promise<AllocationsResponse> {
+    if (!(options && options.riskValue && options.uid)) {
+      throw new Error(`${this.FAILED_CHECK_ERROR}
+        riskValue\n
+        uid
       `);
     }
     return new Promise((resolve, reject) => {
-      const data = JSON.stringify(allocationsData);
-      const options = {
+      const data = JSON.stringify(options);
+      const requestOptions = {
         headers: {
           'Content-Length': data.length,
           'Content-Type': 'application/json',
@@ -94,7 +97,7 @@ export class BuildUp {
         path: `/api/v1/allocations?${this.getKeyAndSecret()}`,
         port: this.API_PORT,
       };
-      const request = this.createHttpRequest(options, resolve);
+      const request = this.createHttpRequest(requestOptions, resolve);
       request.on('error', (error: Error): void => reject(error));
       request.write(data);
       request.end();
@@ -103,19 +106,19 @@ export class BuildUp {
 
   /**
    * Get IRA data from the provided IRA type
-   * @param IRAData {IRADataType} - IRA data, should contain IRA Type and UID
+   * @param options {IRATypeOptions} - options object, should contain IRA Type and UID
    * @returns {Promise<IRATypeResponse>}
    */
-  public getIRAType(IRAData: IRADataType): Promise<IRATypeResponse> {
-    if (!(IRAData && IRAData.IRAType && IRAData.uid)) {
-      throw new Error(`BuildUp: invalid IRA data provided! IRA data object should contain:\n
-        IRA Type\n
-        UID
+  public getIRAType(options: IRATypeOptions): Promise<IRATypeResponse> {
+    if (!(options && options.IRAType && options.uid)) {
+      throw new Error(`${this.FAILED_CHECK_ERROR}
+        IRAType\n
+        uid
       `);
     }
     return new Promise((resolve, reject) => {
-      const data = JSON.stringify(IRAData);
-      const options = {
+      const data = JSON.stringify(options);
+      const requestOptions = {
         headers: {
           'Content-Length': data.length,
           'Content-Type': 'application/json',
@@ -125,7 +128,7 @@ export class BuildUp {
         path: `/api/v1/ira-type?${this.getKeyAndSecret()}`,
         port: this.API_PORT,
       };
-      const request = this.createHttpRequest(options, resolve);
+      const request = this.createHttpRequest(requestOptions, resolve);
       request.on('error', (error: Error): void => reject(error));
       request.write(data);
       request.end();
@@ -134,29 +137,28 @@ export class BuildUp {
 
   /**
    * Get Risk Value based on the Risk Answers
-   * @param answers {AnswersValues}
+   * @param options {RiskValueOptions} - options object, should contain Risk Answers and UID
    * @returns {Promise<RiskValueResponse>}
    */
-  public getRiskValue(answers: AnswersValues): Promise<RiskValueResponse> {
-    const isAnswersValues = answers
-      && answers.riskGrowth
-      && answers.riskLevel
-      && answers.riskLosses
-      && answers.riskVolatility
-      && answers.uid;
-
-    if (!isAnswersValues) {
-      throw new Error(`BuildUp: invalid Answers values data provided! Answers values data object should contain:\n
+  public getRiskValue(options: RiskValueOptions): Promise<RiskValueResponse> {
+    const checkValues = options
+      && options.riskGrowth
+      && options.riskLevel
+      && options.riskLosses
+      && options.riskVolatility
+      && options.uid;
+    if (!checkValues) {
+      throw new Error(`${this.FAILED_CHECK_ERROR}
         riskGrowth\n
         riskLevel\n
         riskLosses\n
         riskVolatility\n
-        UID
+        uid
       `);
     }
     return new Promise((resolve, reject) => {
-      const data = JSON.stringify(answers);
-      const options = {
+      const data = JSON.stringify(options);
+      const requestOptions = {
         headers: {
           'Content-Length': data.length,
           'Content-Type': 'application/json',
@@ -166,19 +168,11 @@ export class BuildUp {
         path: `/api/v1/risk-value?${this.getKeyAndSecret()}`,
         port: this.API_PORT,
       };
-      const request = this.createHttpRequest(options, resolve);
+      const request = this.createHttpRequest(requestOptions, resolve);
       request.on('error', (error: Error): void => reject(error));
       request.write(data);
       request.end();
     });
-  }
-
-  /**
-   * Get key and secret path string
-   * @returns {string}
-   */
-  private getKeyAndSecret(): string {
-    return `key=${this.KEY}&secret=${this.SECRET}`;
   }
 
   /**
@@ -199,5 +193,13 @@ export class BuildUp {
       });
       response.on('end', () => resolve(JSON.parse(data)));
     });
+  }
+
+  /**
+   * Get key and secret path string
+   * @returns {string}
+   */
+  private getKeyAndSecret(): string {
+    return `key=${this.KEY}&secret=${this.SECRET}`;
   }
 }

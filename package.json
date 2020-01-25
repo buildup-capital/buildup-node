@@ -21,8 +21,8 @@
     "version": "npm run format && git add -A src"
   },
   "engines": {
-    "node": "13.6.0",
-    "npm": "6.13.4"
+    "node": "13.7.0",
+    "npm": "6.13.6"
   },
   "repository": {
     "type": "git",
