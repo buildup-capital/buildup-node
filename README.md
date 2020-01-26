@@ -156,9 +156,14 @@ Method returns an object:
 This method provides maximum contribution amount based on the selected IRA type.
 
 ```javascript
-const IRAType = 'SEP IRA';
+const options = {
+  IRAType: 'SEP IRA',
+};
 
-const IRAData = await BuildUpClient.getIRAType(IRAType);
+// add a user identifier to the options
+options.uid = User.identifier;
+
+const IRAData = await BuildUpClient.getIRAType(options);
 ```
 
 Options:
@@ -173,19 +178,22 @@ Method returns an object:
 }
 ```
 
-**getRiskValue(answers: AnswersValues)**
+**getRiskValue(options: AnswersValues)**
 
 This method provides Risk Value based on the Risk Question answers.
 
 ```javascript
-const answers = {
+const options = {
   riskGrowth: 5,
   riskLevel: 2,
   riskLosses: 4,
   riskVolatility: 2,
 };
 
-const riskValue = await BuildUpClient.getRiskValue(answers);
+// add a user identifier to the options
+options.uid = User.identifier;
+
+const riskValue = await BuildUpClient.getRiskValue(options);
 ```
 
 Options:
