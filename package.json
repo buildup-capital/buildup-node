@@ -1,6 +1,6 @@
 {
   "name": "buildup-node",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "BuildUp module",
   "homepage": "https://github.com/buildup-capital/buildup-node",
   "types": "build/index.d.ts",

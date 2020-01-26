@@ -36,14 +36,7 @@ export class BuildUp {
    * @returns {Promise<AccountOverviewResponse>}
    */
   public getAccountOverview(options: AccountOverviewOptions): Promise<AccountOverviewResponse> {
-    const {
-      IRAType,
-      contributionPercentage,
-      riskValue,
-      startDate,
-      totalIncome,
-      uid,
-    }: AccountOverviewOptions = options;
+    const { IRAType, contributionPercentage, riskValue, startDate, totalIncome, uid }: AccountOverviewOptions = options;
     if (!(IRAType && contributionPercentage && riskValue && startDate && totalIncome && uid)) {
       throw new Error(`${this.FAILED_CHECK_ERROR}
         IRAType\n
@@ -141,12 +134,8 @@ export class BuildUp {
    * @returns {Promise<RiskValueResponse>}
    */
   public getRiskValue(options: RiskValueOptions): Promise<RiskValueResponse> {
-    const checkValues = options
-      && options.riskGrowth
-      && options.riskLevel
-      && options.riskLosses
-      && options.riskVolatility
-      && options.uid;
+    const checkValues =
+      options && options.riskGrowth && options.riskLevel && options.riskLosses && options.riskVolatility && options.uid;
     if (!checkValues) {
       throw new Error(`${this.FAILED_CHECK_ERROR}
         riskGrowth\n

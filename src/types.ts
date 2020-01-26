@@ -47,7 +47,7 @@ export interface AccountOverviewResponse {
 }
 
 export interface AllocationsDataObject {
-  allocations: AllocationsObject,
+  allocations: AllocationsObject;
 }
 
 export interface AllocationsObject {
@@ -111,7 +111,7 @@ export interface ReturnPercentageGraphObject {
 export interface RiskValueObject {
   invalid?: string[];
   missing?: string[];
-  riskValue?: number|string;
+  riskValue?: number | string;
 }
 
 export interface RiskValueOptions {
