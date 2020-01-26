@@ -12,8 +12,6 @@ npm install buildup-node
 
 API keys are required for the module to work.
 
-Please [contact the developer](https://github.com/peterdee) to get more infomation regarding the API keys.
-
 ### Usage
 
 Import the module:
